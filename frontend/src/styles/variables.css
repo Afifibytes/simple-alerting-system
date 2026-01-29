@@ -1,0 +1,68 @@
+:root {
+  /* Dark Theme Colors */
+  --color-background: #101922;
+  --color-surface: #1a2632;
+  --color-surface-hover: #243342;
+  --color-surface-border: #2b3d52;
+
+  /* Primary */
+  --color-primary: #137fec;
+  --color-primary-hover: #1a8ff9;
+  --color-primary-dark: #0e6bc7;
+
+  /* Status Colors */
+  --color-success: #10b981;
+  --color-success-dim: rgba(16, 185, 129, 0.15);
+  --color-warning: #f59e0b;
+  --color-warning-dim: rgba(245, 158, 11, 0.15);
+  --color-danger: #ef4444;
+  --color-danger-dim: rgba(239, 68, 68, 0.15);
+  --color-info: #06b6d4;
+  --color-info-dim: rgba(6, 182, 212, 0.15);
+
+  /* Text */
+  --color-text: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-text-inverse: #0f172a;
+
+  /* Borders */
+  --color-border: #2b3d52;
+  --color-border-light: #1e2d3d;
+
+  /* Severity colors */
+  --severity-low: #10b981;
+  --severity-low-dim: rgba(16, 185, 129, 0.15);
+  --severity-medium: #f59e0b;
+  --severity-medium-dim: rgba(245, 158, 11, 0.15);
+  --severity-high: #ef4444;
+  --severity-high-dim: rgba(239, 68, 68, 0.15);
+
+  /* Table specific */
+  --table-header-bg: #0d1318;
+  --table-row-hover: #243342;
+  --table-border: #2b3d52;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* Border radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Consolas', monospace;
+}

@@ -1,0 +1,11 @@
+[project]
+name = "alerting-system"
+version = "1.0.0"
+requires-python = ">=3.12"
+
+[tool.setuptools]
+packages = ["app"]
+
+[tool.pyright]
+pythonVersion = "3.12"
+root = "."
