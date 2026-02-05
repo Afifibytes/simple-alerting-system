@@ -3,13 +3,12 @@ import { DataTable } from '../common/DataTable';
 import { StatusBadge } from '../common/StatusBadge';
 import { ToggleSwitch } from '../common/ToggleSwitch';
 import { Icon } from '../common/Icon';
-import type { Rule, EvaluationResult } from '../../types';
+import type { Rule } from '../../types';
 
 interface RuleListProps {
   rules: Rule[];
   loading: boolean;
   onDelete: (id: string) => Promise<void>;
-  onEvaluate: (id: string) => Promise<EvaluationResult>;
   onUpdate?: (id: string, data: Partial<Rule>) => Promise<Rule>;
 }
 
@@ -17,28 +16,8 @@ interface ProcessingState {
   [key: string]: boolean;
 }
 
-// Lookup map for rules by ID - avoids needing to pass full rule objects
-function createRuleMap(rules: Rule[]): Map<string, Rule> {
-  return new Map(rules.map(r => [r.id, r]));
-}
-
-export function RuleList({ rules, loading, onDelete, onEvaluate, onUpdate }: RuleListProps): React.ReactElement {
-  const [evaluating, setEvaluating] = useState<ProcessingState>({});
+export function RuleList({ rules, loading, onDelete, onUpdate }: RuleListProps): React.ReactElement {
   const [deleting, setDeleting] = useState<ProcessingState>({});
-
-  const ruleMap = createRuleMap(rules);
-
-  // Use data-id attribute to avoid creating functions per row
-  const handleEvaluateClick = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
-    const id = e.currentTarget.dataset.id;
-    if (!id) return;
-    setEvaluating((prev) => ({ ...prev, [id]: true }));
-    try {
-      await onEvaluate(id);
-    } finally {
-      setEvaluating((prev) => ({ ...prev, [id]: false }));
-    }
-  }, [onEvaluate]);
 
   const handleDeleteClick = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
     const id = e.currentTarget.dataset.id;
@@ -112,15 +91,6 @@ export function RuleList({ rules, loading, onDelete, onEvaluate, onUpdate }: Rul
       </td>
       <td>
         <div className="row-actions">
-          <button
-            className="btn btn-ghost btn-sm"
-            data-id={rule.id}
-            onClick={handleEvaluateClick}
-            disabled={evaluating[rule.id]}
-            title="Test rule"
-          >
-            <Icon name="play_arrow" size="sm" />
-          </button>
           <button
             className="btn btn-ghost btn-sm text-danger"
             data-id={rule.id}

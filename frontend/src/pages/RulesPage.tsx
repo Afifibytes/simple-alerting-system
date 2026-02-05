@@ -12,7 +12,7 @@ interface RulesPageProps {
 }
 
 export function RulesPage({ showForm, onFormComplete }: RulesPageProps): React.ReactElement {
-  const { rules, loading, createRule, updateRule, deleteRule, evaluateRule } = useRules();
+  const { rules, loading, createRule, updateRule, deleteRule } = useRules();
   const { sources, loading: sourcesLoading } = useSources();
   const { channels, loading: channelsLoading } = useNotifications();
   const [creating, setCreating] = useState(false);
@@ -46,7 +46,6 @@ export function RulesPage({ showForm, onFormComplete }: RulesPageProps): React.R
         rules={rules}
         loading={loading}
         onDelete={deleteRule}
-        onEvaluate={evaluateRule}
         onUpdate={updateRule}
       />
     </>
