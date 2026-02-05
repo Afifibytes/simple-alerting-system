@@ -4,24 +4,22 @@ from abc import ABC, abstractmethod
 
 from app.models.rule import AlertRule
 from app.schemas.evaluation import EvaluationResponse
-from app.services.operators import operator_registry
 
 
 class BaseConditionEvaluator(ABC):
     """Abstract base class for condition evaluators."""
 
-    def __init__(self):
-        self._operator_registry = operator_registry
-
-    def check_condition(
-        self, value, operator: str, condition_value: str
-    ) -> bool:
-        """Check if a value matches the condition using the operator registry."""
-        return self._operator_registry.evaluate(operator, value, condition_value)
-
     @abstractmethod
-    def evaluate(self, rule: AlertRule, events: list[dict]) -> EvaluationResponse:
-        """Evaluate the condition against events."""
+    def evaluate(
+        self, rule: AlertRule, matching_count: int, total_with_field: int
+    ) -> EvaluationResponse:
+        """Evaluate the condition using pre-computed counts from the database.
+
+        Args:
+            rule: The alert rule being evaluated
+            matching_count: Number of events matching the condition
+            total_with_field: Total number of events that have the specified field
+        """
         pass
 
 

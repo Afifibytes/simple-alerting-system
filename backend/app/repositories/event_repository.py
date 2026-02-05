@@ -3,12 +3,30 @@
 from datetime import datetime, timezone
 from uuid import UUID
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session, Query, joinedload
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.exceptions import DatabaseError
 from app.models.event import Event
 from app.models.source import Source
+
+
+# Map Python operators to SQL condition fragments for JSONB queries
+# Returns (sql_fragment, needs_numeric_cast)
+OPERATOR_SQL_MAP = {
+    ">": ("(data->>:field)::float > :value::float", True),
+    "gt": ("(data->>:field)::float > :value::float", True),
+    "<": ("(data->>:field)::float < :value::float", True),
+    "lt": ("(data->>:field)::float < :value::float", True),
+    ">=": ("(data->>:field)::float >= :value::float", True),
+    "gte": ("(data->>:field)::float >= :value::float", True),
+    "<=": ("(data->>:field)::float <= :value::float", True),
+    "lte": ("(data->>:field)::float <= :value::float", True),
+    "==": ("data->>:field = :value", False),
+    "eq": ("data->>:field = :value", False),
+    "contains": ("LOWER(data->>:field) LIKE LOWER('%' || :value || '%')", False),
+}
 
 
 class EventRepository:
@@ -200,3 +218,66 @@ class EventRepository:
         except SQLAlchemyError as e:
             self._db.rollback()
             raise DatabaseError(f"Failed to delete old events: {e}") from e
+
+    def count_matching_events(
+        self,
+        source_name: str,
+        window_seconds: int,
+        field: str,
+        operator: str,
+        value: str,
+    ) -> tuple[int, int]:
+        """Count events matching a condition using database aggregation.
+
+        This pushes COUNT to the database instead of loading events into memory.
+
+        Args:
+            source_name: Name of the event source
+            window_seconds: Time window in seconds
+            field: JSONB field to check in event data
+            operator: Comparison operator (>, <, >=, <=, ==, eq, gt, lt, gte, lte, contains)
+            value: Value to compare against
+
+        Returns:
+            Tuple of (matching_count, total_with_field_count)
+        """
+        try:
+            # Get source ID
+            source = self._db.query(Source).filter(Source.name == source_name).first()
+            if source is None:
+                return (0, 0)
+
+            window_start, now = self._calculate_window_bounds(window_seconds)
+
+            # Get the SQL condition fragment for this operator
+            sql_condition = OPERATOR_SQL_MAP.get(operator)
+            if sql_condition is None:
+                raise ValueError(f"Unsupported operator: {operator}")
+
+            condition_sql, _ = sql_condition
+
+            # Build the aggregation query
+            query = text(f"""
+                SELECT
+                    COUNT(*) FILTER (WHERE {condition_sql}) as matching,
+                    COUNT(*) FILTER (WHERE data ? :field) as total_with_field
+                FROM events
+                WHERE source_id = :source_id
+                  AND timestamp >= :window_start
+                  AND timestamp <= :now
+            """)
+
+            result = self._db.execute(
+                query,
+                {
+                    "source_id": source.id,
+                    "window_start": window_start,
+                    "now": now,
+                    "field": field,
+                    "value": value,
+                },
+            ).fetchone()
+
+            return (result.matching or 0, result.total_with_field or 0)
+        except SQLAlchemyError as e:
+            raise DatabaseError(f"Failed to count matching events: {e}") from e

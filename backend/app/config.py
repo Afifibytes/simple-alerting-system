@@ -28,7 +28,6 @@ class Settings(BaseSettings):
 
     # Event settings
     event_retention_seconds: int = 7 * 24 * 60 * 60  # DB retention (7 days)
-    max_events_per_evaluation: int = 10000  # Max events to load for rule evaluation (OOM protection)
 
 
 @lru_cache
