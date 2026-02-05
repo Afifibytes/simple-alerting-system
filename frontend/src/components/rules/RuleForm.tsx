@@ -131,6 +131,7 @@ export function RuleForm({
             >
               <option value="count">Count</option>
               <option value="threshold">Threshold</option>
+              <option value="average">Average</option>
             </select>
           </div>
         </div>
