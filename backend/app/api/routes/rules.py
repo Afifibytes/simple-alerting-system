@@ -48,6 +48,7 @@ def _rule_to_detail(rule) -> AlertRuleDetailResponse:
         condition_threshold=rule.condition_threshold,
         severity=rule.severity,
         time_window_seconds=rule.time_window_seconds,
+        is_active=rule.is_active,
         created_at=rule.created_at,
         updated_at=rule.updated_at,
         notification_channels=[

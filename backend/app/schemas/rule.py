@@ -26,6 +26,7 @@ class AlertRuleCreate(BaseModel):
     condition_threshold: int = Field(..., ge=1)
     severity: Severity
     time_window_seconds: int = Field(..., ge=1, le=86400)
+    is_active: bool = True
     notification_channel_ids: list[UUID] = Field(default_factory=list)
 
 
@@ -38,6 +39,7 @@ class AlertRuleUpdate(BaseModel):
     condition_threshold: int | None = Field(None, ge=1)
     severity: Severity | None = None
     time_window_seconds: int | None = Field(None, ge=1, le=86400)
+    is_active: bool | None = None
     notification_channel_ids: list[UUID] | None = None
 
 
@@ -52,6 +54,7 @@ class AlertRuleResponse(BaseModel):
     condition_threshold: int
     severity: Severity
     time_window_seconds: int
+    is_active: bool
     created_at: datetime
     updated_at: datetime
 

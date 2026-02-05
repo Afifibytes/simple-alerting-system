@@ -202,8 +202,8 @@ class EventWorker(BaseWorker):
             return
 
         self._logger.debug("Found source '%s' (ID: %s)", source_name, source.id)
-        rules = rule_repo.get_by_source_id(source.id)
-        self._logger.debug("Found %d rules for source '%s'", len(rules), source_name)
+        rules = rule_repo.get_by_source_id(source.id, active_only=True)
+        self._logger.debug("Found %d active rules for source '%s'", len(rules), source_name)
 
         for rule in rules:
             self._evaluate_single_rule(rule, source_name, evaluator, channel)

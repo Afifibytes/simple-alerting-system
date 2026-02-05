@@ -2,7 +2,7 @@ import enum
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Column, String, Integer, DateTime, Enum, Index, ForeignKey
+from sqlalchemy import Column, String, Integer, DateTime, Enum, Index, ForeignKey, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -38,6 +38,7 @@ class AlertRule(Base):
     condition_threshold = Column(Integer, nullable=False)
     severity = Column(Enum(Severity), nullable=False)
     time_window_seconds = Column(Integer, nullable=False)
+    is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime(timezone=True), default=utc_now)
     updated_at = Column(DateTime(timezone=True), default=utc_now, onupdate=utc_now)
 

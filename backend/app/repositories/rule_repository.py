@@ -81,9 +81,12 @@ class RuleRepository:
         except SQLAlchemyError as e:
             raise DatabaseError(f"Failed to fetch rule: {e}") from e
 
-    def get_by_source_id(self, source_id: UUID) -> list[AlertRule]:
+    def get_by_source_id(self, source_id: UUID, active_only: bool = False) -> list[AlertRule]:
         try:
-            return self._base_query().filter(AlertRule.source_id == source_id).order_by(AlertRule.created_at.desc()).all()
+            query = self._base_query().filter(AlertRule.source_id == source_id)
+            if active_only:
+                query = query.filter(AlertRule.is_active == True)
+            return query.order_by(AlertRule.created_at.desc()).all()
         except SQLAlchemyError as e:
             raise DatabaseError(f"Failed to fetch rules: {e}") from e
 
