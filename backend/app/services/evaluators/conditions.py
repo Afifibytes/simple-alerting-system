@@ -61,3 +61,27 @@ class ThresholdConditionEvaluator(BaseConditionEvaluator):
             threshold=rule.condition_threshold,
             message=message,
         )
+
+class AverageConditionEvaluator(BaseConditionEvaluator):
+    """Evaluator for average-based conditions."""
+    def evaluate(
+        self, rule: AlertRule, matching_count: int, total_with_field: int
+    ) -> EvaluationResponse:
+        """Check if the average of matching events meets the threshold."""
+        if total_with_field == 0:
+            return EvaluationResponse(
+                triggered=False,
+                matches=0,
+                threshold=rule.condition_threshold,
+                message="No events with the specified field found",
+            )
+
+        average = matching_count / total_with_field
+        triggered = average >= rule.condition_threshold
+
+        return EvaluationResponse(
+            triggered=triggered,
+            matches=matching_count,
+            threshold=rule.condition_threshold,
+            message=f"Average of {average} (threshold: {rule.condition_threshold})",
+        )
